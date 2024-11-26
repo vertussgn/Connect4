@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">connect4-game</a> &gt; <a href="index.source.html" class="el_package">org.connect4</a> &gt; <span class="el_source">DatabaseManager.java</span></div><h1>DatabaseManager.java</h1><pre class="source lang-java linenums">package org.connect4;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * A DatabaseManager osztály kezeli az adatbázissal való műveleteket,
+ * beleértve a pontszámok mentését, frissítését és lekérdezését.
+ */
+public final class DatabaseManager {
+    /**
+     * Az adatbázis fájl elérési útja.
+     * Az SQLite adatbázis fájlt használjuk
+     * a Connect 4 játék pontszámainak tárolására.
+     */
+    private static final String DB_URL = &quot;jdbc:sqlite:connect4.db&quot;;
+    // Az adatbázis fájl elérési útja
+
+    // A konstruktor priváttá tétele,
+    // hogy megakadályozza az osztály példányosítását
+<span class="nc" id="L25">    private DatabaseManager() {</span>
+<span class="nc" id="L26">        throw new UnsupportedOperationException(&quot;Utility class&quot;);</span>
+    }
+
+    /**
+     * Ellenőrzi, hogy létezik-e a szükséges tábla, ha nem, akkor létrehozza.
+     */
+    static void createTableIfNotExists() {
+        // Az SQL parancs a tábla létrehozására, ha nem létezik
+<span class="fc" id="L34">        String createTableSQL =</span>
+                &quot;CREATE TABLE IF NOT EXISTS high_scores (&quot;
+                        + &quot;name TEXT PRIMARY KEY,&quot;
+                        + &quot;score INTEGER&quot;
+                        + &quot;);&quot;;
+
+<span class="fc" id="L40">        try (Connection conn = DriverManager.getConnection(DB_URL);</span>
+<span class="fc" id="L41">             Statement stmt = conn.createStatement()) {</span>
+<span class="fc" id="L42">            stmt.execute(createTableSQL);</span>
+<span class="nc" id="L43">        } catch (SQLException e) {</span>
+<span class="nc" id="L44">            System.out.println(&quot;Hiba történt a tábla létrehozása során: &quot;</span>
+<span class="nc" id="L45">                    + e.getMessage());</span>
+<span class="fc" id="L46">        }</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Pontszám hozzáadása vagy frissítése
+     * a játékos adatainak az adatbázisban.
+     * Ha a játékos már létezik, frissíti a pontszámot,
+     * különben új rekordot ad hozzá.
+     *
+     * @param playerName A játékos neve.
+     * @param score A játékos pontszáma.
+     */
+    public static void addOrUpdateHighScore(final String playerName,
+                                            final int score) {
+        // Először ellenőrizzük, hogy a tábla létezik-e, ha nem, létrehozzuk
+<span class="fc" id="L61">        createTableIfNotExists();</span>
+
+        // Az SQL parancs a pontszám ellenőrzésére
+<span class="fc" id="L64">        String checkSql = &quot;SELECT score FROM high_scores WHERE name = ?&quot;;</span>
+
+        // Az SQL parancs az új rekord beszúrására
+<span class="fc" id="L67">        String insertSql =</span>
+                &quot;INSERT INTO high_scores (name, score) VALUES (?, ?)&quot;;
+
+        // Az SQL parancs a pontszám frissítésére
+<span class="fc" id="L71">        String updateSql = &quot;UPDATE high_scores SET score = ? WHERE name = ?&quot;;</span>
+
+<span class="fc" id="L73">        try (Connection conn = DriverManager.getConnection(DB_URL)) {</span>
+            // Ellenőrizzük, hogy a játékos létezik-e már
+<span class="fc" id="L75">            try (PreparedStatement stmt = conn.prepareStatement(checkSql)) {</span>
+<span class="fc" id="L76">                stmt.setString(1, playerName);</span>
+<span class="fc" id="L77">                ResultSet rs = stmt.executeQuery();</span>
+
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                if (rs.next()) {</span>
+                    // Ha létezik, frissítjük a pontszámot, ha szükséges
+<span class="fc" id="L81">                    int existingScore = rs.getInt(&quot;score&quot;);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">                    if (score &gt; existingScore) {</span>
+<span class="nc" id="L83">                        try (PreparedStatement updateStmt =</span>
+<span class="nc" id="L84">                                     conn.prepareStatement(updateSql)) {</span>
+<span class="nc" id="L85">                            updateStmt.setInt(1, score);</span>
+<span class="nc" id="L86">                            updateStmt.setString(2, playerName);</span>
+<span class="nc" id="L87">                            updateStmt.executeUpdate();</span>
+                        }
+                    }
+<span class="fc" id="L90">                } else {</span>
+                    // Ha nem létezik, új rekordot adunk hozzá
+<span class="nc" id="L92">                    try (PreparedStatement insertStmt =</span>
+<span class="nc" id="L93">                                 conn.prepareStatement(insertSql)) {</span>
+<span class="nc" id="L94">                        insertStmt.setString(1, playerName);</span>
+<span class="nc" id="L95">                        insertStmt.setInt(2, score);</span>
+<span class="nc" id="L96">                        insertStmt.executeUpdate();</span>
+                    }
+                }
+            }
+<span class="nc" id="L100">        } catch (SQLException e) {</span>
+<span class="nc" id="L101">            System.out.println(&quot;Hiba történt a pontszám mentése során: &quot;</span>
+<span class="nc" id="L102">                    + e.getMessage());</span>
+<span class="fc" id="L103">        }</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * A legjobb pontszámokat lekérdezi az adatbázisból.
+     */
+    public static void printHighScores() {
+        // Az SQL parancs a legjobb pontszámok lekérdezésére
+<span class="fc" id="L111">        String sql =</span>
+                &quot;SELECT name, score &quot;
+                        + &quot;FROM high_scores &quot;
+                        + &quot;ORDER BY score DESC LIMIT 10&quot;;
+
+<span class="fc" id="L116">        try (Connection conn = DriverManager.getConnection(DB_URL);</span>
+<span class="fc" id="L117">             Statement stmt = conn.createStatement();</span>
+<span class="fc" id="L118">             ResultSet rs = stmt.executeQuery(sql)) {</span>
+
+<span class="fc" id="L120">            System.out.println(&quot;\nLegjobb pontszámok:&quot;);</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            while (rs.next()) {</span>
+                // Játékos neve és pontszámának lekérdezése
+<span class="fc" id="L123">                String playerName = rs.getString(&quot;name&quot;); // Játékos neve</span>
+<span class="fc" id="L124">                int score = rs.getInt(&quot;score&quot;); // Játékos pontszáma</span>
+<span class="fc" id="L125">                System.out.println(playerName + &quot;: &quot; + score);</span>
+<span class="fc" id="L126">            }</span>
+<span class="nc" id="L127">        } catch (SQLException e) {</span>
+<span class="nc" id="L128">            System.out.println(&quot;Hiba történt! &quot; + e.getMessage());</span>
+<span class="fc" id="L129">        }</span>
+<span class="fc" id="L130">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

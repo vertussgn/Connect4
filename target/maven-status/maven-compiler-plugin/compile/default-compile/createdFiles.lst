@@ -1,0 +1,6 @@
+org\connect4\Board.class
+org\connect4\Main.class
+org\connect4\package-info.class
+org\connect4\Game.class
+org\connect4\Player.class
+org\connect4\DatabaseManager.class

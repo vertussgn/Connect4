@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">connect4-game</a> &gt; <a href="index.source.html" class="el_package">org.connect4</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package org.connect4;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+
+/**
+ * A Connect 4 játék táblája.
+ * Ez az osztály metódusokat biztosít a tábla kezeléséhez,
+ * győzelmi feltételek és a játékállapotok
+ * mentéséhez és betöltéséhez.
+ */
+public class Board {
+    /** A tábla sorainak száma. */
+    private static final int DEFAULT_ROWS = 6;
+
+    /** A tábla oszlopainak száma. */
+    private static final int DEFAULT_COLS = 7;
+
+    /** A győzelemhez szükséges összekötendő karakterek száma. */
+    private static final int CONNECT_LENGTH = 4;
+
+    /** 2D tömb, amely a táblát reprezentálja. */
+    private final char[][] board;
+
+    /**
+     * Üres tábla alapértelmezett értékekkel.
+     */
+<span class="fc" id="L32">    public Board() {</span>
+<span class="fc" id="L33">        this.board = new char[DEFAULT_ROWS][DEFAULT_COLS];</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        for (char[] row : board) {</span>
+<span class="fc" id="L35">            Arrays.fill(row, '.'); // Üres helyekkel inicializálás</span>
+        }
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Karakter ledobása a megadott oszlopba.
+     *
+     * @param col   Az oszlop ahova a karaktert dobjuk.
+     * @param token A ledobott karakter.
+     * @return True, ha a karakter sikeresen le lett dobva,
+     *         false, ha az oszlop tele van vagy érvénytelen.
+     */
+    public boolean dropToken(final int col, final char token) {
+<span class="fc bfc" id="L48" title="All 4 branches covered.">        if (col &lt; 0 || col &gt;= DEFAULT_COLS) {</span>
+<span class="fc" id="L49">            System.out.println(&quot;Érvénytelen oszlop: &quot; + col);</span>
+<span class="fc" id="L50">            return false;</span>
+        }
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (int row = DEFAULT_ROWS - 1; row &gt;= 0; row--) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            if (board[row][col] == '.') {</span>
+<span class="fc" id="L54">                board[row][col] = token;</span>
+<span class="fc" id="L55">                return true; // Sikeres tokenledobás</span>
+            }
+        }
+<span class="fc" id="L58">        System.out.println(&quot;Az oszlop tele van: &quot; + col);</span>
+<span class="fc" id="L59">        return false; // Az oszlop tele van</span>
+    }
+
+    /**
+     * A tábla aktuális állapotának kiírása.
+     */
+    public void print() {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        for (char[] row : board) {</span>
+<span class="nc" id="L67">            System.out.println(new String(row)); // Minden sort kiírunk</span>
+        }
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Ellenőrzi, hogy a tábla tele van-e.
+     *
+     * @return True, ha a tábla tele van, különben false.
+     */
+    public boolean isFull() {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (char[] row : board) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (char cell : row) {</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                if (cell == '.') {</span>
+<span class="nc" id="L80">                    return false; // Találtunk egy üres helyet</span>
+                }
+            }
+        }
+<span class="fc" id="L84">        return true; // Nincsenek üres helyek</span>
+    }
+
+    /**
+     * Játékállapot betöltése egy fájlból.
+     *
+     * @param fileName A fájl neve, amelyből a játékállapotot betöltjük.
+     * @return True, ha az állapot sikeresen betöltődött, különben false.
+     */
+    public boolean loadStateFromFile(final String fileName) {
+<span class="fc" id="L94">        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            for (int r = 0; r &lt; DEFAULT_ROWS; r++) {</span>
+<span class="fc" id="L96">                String line = br.readLine();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                if (line == null) {</span>
+<span class="nc" id="L98">                    break; // Ha a fájl rövidebb, mint a tábla, akkor leállunk.</span>
+                }
+                for
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                (int c = 0; c &lt; Math.min(line.length(), DEFAULT_COLS); c++) {</span>
+<span class="fc" id="L102">                    board[r][c] = line.charAt(c);</span>
+                }
+            }
+<span class="fc" id="L105">            System.out.println(</span>
+                    &quot;Játékállapot sikeresen betöltve a(z) &quot;
+                            + fileName + &quot; fájlból.&quot;
+            );
+<span class="fc" id="L109">            return true; // Sikeres játékállapot betöltés</span>
+<span class="nc" id="L110">        } catch (IOException e) {</span>
+<span class="nc" id="L111">            System.out.println(&quot;Hiba a(z) &quot; + fileName</span>
+<span class="nc" id="L112">                    + &quot; fájl betöltésekor: &quot; + e.getMessage());</span>
+<span class="nc" id="L113">            return false; // A játékállapot betöltése nem sikerült</span>
+        }
+    }
+
+    /**
+     * A jelenlegi játékállapot mentése fájlba.
+     *
+     * @param fileName A fájl neve, ahova a játékállapotot mentjük.
+     */
+    public void saveStateToFile(final String fileName) {
+<span class="fc" id="L123">        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            for (char[] row : board) {</span>
+<span class="fc" id="L125">                bw.write(row); // A sort közvetlenül kiírjuk</span>
+<span class="fc" id="L126">                bw.newLine(); // Következő sorba lépés a fájlban</span>
+            }
+<span class="fc" id="L128">            System.out.println(&quot;A játékállapot mentésre került a(z) &quot;</span>
+                    + fileName + &quot; fájlba.&quot;);
+<span class="nc" id="L130">        } catch (IOException e) {</span>
+<span class="nc" id="L131">            System.out.println(&quot;Hiba történt a játékállapot mentésekor: &quot;</span>
+<span class="nc" id="L132">                    + e.getMessage());</span>
+<span class="fc" id="L133">        }</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Vízszintes győzelmi feltétel ellenőrzése.
+     *
+     * @param player A játékos, akinek a győzelmét vizsgáljuk.
+     * @return True, ha a játékos vízszintesen nyert, különben false.
+     */
+    public boolean checkHorizontalWin(final Player player) {
+<span class="fc" id="L143">        final char token = player.getToken();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        for (int row = 0; row &lt; DEFAULT_ROWS; row++) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                if (isWinningCombination(row, col, token, 0, 1)) {</span>
+<span class="fc" id="L147">                    return true; // Találtunk egy vízszintes győzelmet</span>
+                }
+            }
+        }
+<span class="nc" id="L151">        return false; // Nincs vízszintes győzelem</span>
+    }
+
+    /**
+     * Függőleges győzelmi feltétel ellenőrzése.
+     *
+     * @param player A játékos, akinek a győzelmét vizsgáljuk.
+     * @return True, ha a játékos függőlegesen nyert, különben false.
+     */
+    public boolean checkVerticalWin(final Player player) {
+<span class="fc" id="L161">        final char token = player.getToken();</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        for (int col = 0; col &lt; DEFAULT_COLS; col++) {</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                if (isWinningCombination(row, col, token, 1, 0)) {</span>
+<span class="fc" id="L165">                    return true; // Találtunk egy függőleges győzelmet</span>
+                }
+            }
+        }
+<span class="nc" id="L169">        return false; // Nincs függőleges győzelem</span>
+    }
+
+    /**
+     * Átlós győzelmi feltétel.
+     *
+     * @param player A játékos, akinek a győzelmét vizsgáljuk.
+     * @return True, ha a játékos átlósan nyert, különben false.
+     */
+    public boolean checkDiagonalWin(final Player player) {
+<span class="nc" id="L179">        final char token = player.getToken();</span>
+        // Pozitív lejtésű átló ellenőrzése (\)
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                if (isWinningCombination(row, col, token, 1, 1)) {</span>
+<span class="nc" id="L184">                    return true;</span>
+                    // Találtunk egy átlós győzelmet (pozitív lejtés)
+                }
+            }
+        }
+
+        // Negatív lejtésű átló ellenőrzése (/)
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        for (int row = CONNECT_LENGTH - 1; row &lt; DEFAULT_ROWS; row++) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
+<span class="nc" id="L193">                if</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                (isWinningCombination(row, col, token, -1, 1)) {</span>
+<span class="nc" id="L195">                    return true;</span>
+                    // Találtunk egy átlós győzelmet (negatív lejtés)
+                }
+            }
+        }
+<span class="nc" id="L200">        return false; // Nincs átlós győzelem</span>
+    }
+
+    /**
+     * Segédmetódus a győzelmi kombináció ellenőrzéséhez.
+     *
+     * @param rowStart   Kezdősor.
+     * @param colStart   Kezdőoszlop.
+     * @param token      A játékos tokenje.
+     * @param rowStep    Soronkénti lépés.
+     * @param colStep    Oszloponkénti lépés.
+     * @return True, ha a győzelmi kombináció megtalálható, különben false.
+     */
+    private boolean isWinningCombination(final int rowStart,
+                                         final int colStart,
+                                         final char token,
+                                         final int rowStep,
+                                         final int colStep) {
+        for
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        (int i = 0; i &lt; CONNECT_LENGTH; i++) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            if</span>
+            (board[rowStart + i * rowStep][colStart + i * colStep] != token) {
+<span class="fc" id="L222">                return false; // Nincs egyezés</span>
+            }
+        }
+<span class="fc" id="L225">        return true; // Győzelmi kombináció megtalálva</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

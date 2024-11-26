@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="hu"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">connect4-game</a> &gt; <a href="index.source.html" class="el_package">org.connect4</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package org.connect4;
+
+import java.util.Scanner;
+
+/**
+ * A Connect 4 játék fő belépési pontja.
+ * Ez az osztály lehetővé teszi a játékosok számára,
+ * hogy válasszanak játékmódokat és elindítsák a játékot.
+ */
+public final class Main {
+    // Privát konstruktor
+<span class="nc" id="L12">    private Main() {</span>
+<span class="nc" id="L13">        throw new UnsupportedOperationException(</span>
+                &quot;A segédosztály példányosítása nem engedélyezett&quot;
+        );
+    }
+
+    /**
+     * A fő metódus amely megviszgálja a játékot.
+     *
+     * @param args Parancssori argumentumok
+     */
+    public static void main(final String[] args) {
+<span class="nc" id="L24">        Scanner scanner = new Scanner(System.in);</span>
+<span class="nc" id="L25">        inditjatek(scanner);</span>
+<span class="nc" id="L26">    }</span>
+
+    /**
+     * Beállítja és elindítja a játékot a felhasználói inputja alapján.
+     *
+     * @param scanner A felhasználói inputja - Scanner
+     */
+    static void inditjatek(final Scanner scanner) {
+<span class="nc" id="L34">        DatabaseManager.printHighScores();</span>
+<span class="nc" id="L35">        System.out.println(&quot;\nVálassz egy lehetőséget:&quot;);</span>
+<span class="nc" id="L36">        System.out.println(&quot;1. Két játékos mód&quot;);</span>
+<span class="nc" id="L37">        System.out.println(&quot;2. Játék az AI ellen&quot;);</span>
+<span class="nc" id="L38">        System.out.println(&quot;3. Betöltés korábbi játékállapotból&quot;);</span>
+<span class="nc" id="L39">        System.out.print(&quot;Írd be a választásod (1, 2 vagy 3): &quot;);</span>
+
+<span class="nc" id="L41">        int choice = scanner.nextInt();</span>
+<span class="nc" id="L42">        scanner.nextLine();</span>
+
+<span class="nc" id="L44">        Game game = Game.setupGame(choice, scanner);</span>
+<span class="nc" id="L45">        game.start();</span>
+
+<span class="nc" id="L47">        System.out.println(&quot;\nA legjobb pontszámok:&quot;);</span>
+<span class="nc" id="L48">        DatabaseManager.printHighScores();</span>
+<span class="nc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
