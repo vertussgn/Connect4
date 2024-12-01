@@ -15,15 +15,18 @@ public final class Main {
         );
     }
 
+    /** A kilépés választási lehetőség azonosítója. */
+    private static final int EXIT_OPTION = 4;
+
     /**
-     * A fő metódus amely megviszgálja a játékot.
+     * A fő metódus, amely megvizsgálja a játékot.
      *
      * @param args Parancssori argumentumok
      */
     public static void main(final String[] args) {
-<span class="nc" id="L24">        Scanner scanner = new Scanner(System.in);</span>
-<span class="nc" id="L25">        inditjatek(scanner);</span>
-<span class="nc" id="L26">    }</span>
+<span class="nc" id="L27">        Scanner scanner = new Scanner(System.in);</span>
+<span class="nc" id="L28">        inditjatek(scanner);</span>
+<span class="nc" id="L29">    }</span>
 
     /**
      * Beállítja és elindítja a játékot a felhasználói inputja alapján.
@@ -31,22 +34,31 @@ public final class Main {
      * @param scanner A felhasználói inputja - Scanner
      */
     static void inditjatek(final Scanner scanner) {
-<span class="nc" id="L34">        System.out.println(&quot;\nTOP 10 pontszámok:&quot;);</span>
-<span class="nc" id="L35">        DatabaseManager.listPlayers();</span>
-<span class="nc" id="L36">        System.out.println(&quot;\nVálassz egy lehetőséget:&quot;);</span>
-<span class="nc" id="L37">        System.out.println(&quot;1. Két játékos mód&quot;);</span>
-<span class="nc" id="L38">        System.out.println(&quot;2. Játék az AI ellen&quot;);</span>
-<span class="nc" id="L39">        System.out.println(&quot;3. Betöltés korábbi játékállapotból&quot;);</span>
-<span class="nc" id="L40">        System.out.print(&quot;Írd be a választásod (1, 2 vagy 3): &quot;);</span>
+        while (true) {
+<span class="nc" id="L38">            DatabaseManager.listPlayers();</span>
+<span class="nc" id="L39">            System.out.println(&quot;\nVálassz egy lehetőséget:&quot;);</span>
+<span class="nc" id="L40">            System.out.println(&quot;1. Két játékos mód&quot;);</span>
+<span class="nc" id="L41">            System.out.println(&quot;2. Játék az AI ellen&quot;);</span>
+<span class="nc" id="L42">            System.out.println(&quot;3. Betöltés korábbi játékállapotból&quot;);</span>
+<span class="nc" id="L43">            System.out.println(&quot;4. Kilépés&quot;);</span>
+<span class="nc" id="L44">            System.out.print(&quot;Írd be a választásod (1, 2, 3 vagy 4): &quot;);</span>
 
-<span class="nc" id="L42">        int choice = scanner.nextInt();</span>
-<span class="nc" id="L43">        scanner.nextLine();</span>
+<span class="nc" id="L46">            int choice = scanner.nextInt();</span>
+<span class="nc" id="L47">            scanner.nextLine();</span>
 
-<span class="nc" id="L45">        Game game = Game.setupGame(choice, scanner);</span>
-<span class="nc" id="L46">        game.start();</span>
+            // A kilépéshez tartozó választás ellenőrzése
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (choice == EXIT_OPTION) {</span>
+<span class="nc" id="L51">                System.out.println(&quot;A program kilép...&quot;);</span>
+<span class="nc" id="L52">                break; // Kilépés a while ciklusból, így a program befejeződik</span>
+            }
 
-<span class="nc" id="L48">        System.out.println(&quot;\nTOP 10 pontszámok:&quot;);</span>
-<span class="nc" id="L49">        DatabaseManager.listPlayers();</span>
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L55">            Game game = Game.setupGame(choice, scanner);</span>
+<span class="nc" id="L56">            game.start();</span>
+
+            // A játék befejezése után automatikusan újraindítja a játékot
+<span class="nc" id="L59">            System.out.println(&quot;A játék véget ért. &quot;</span>
+                    + &quot;Indulhat a következő játék...&quot;);
+<span class="nc" id="L61">        }</span>
+<span class="nc" id="L62">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

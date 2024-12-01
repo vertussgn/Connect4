@@ -30,9 +30,9 @@ public final class DatabaseManager {
      */
     public static Connection connect() {
         try {
-<span class="nc" id="L33">            Connection conn = DriverManager.getConnection(DATABASE_URL);</span>
-<span class="nc" id="L34">            createTablesIfNotExist(conn); // Ellenőrizzük a táblák létét</span>
-<span class="nc" id="L35">            return conn;</span>
+<span class="fc" id="L33">            Connection conn = DriverManager.getConnection(DATABASE_URL);</span>
+<span class="fc" id="L34">            createTablesIfNotExist(conn); // Ellenőrizzük a táblák létét</span>
+<span class="fc" id="L35">            return conn;</span>
 <span class="nc" id="L36">        } catch (SQLException e) {</span>
 <span class="nc" id="L37">            System.out.println(</span>
                     &quot;Hiba az adatbázishoz való csatlakozáskor: &quot;
@@ -48,7 +48,7 @@ public final class DatabaseManager {
      * @param conn Az adatbázis kapcsolat.
      */
      private static void createTablesIfNotExist(final Connection conn) {
-<span class="nc" id="L51">        String createTableSQL = &quot;&quot;&quot;</span>
+<span class="fc" id="L51">        String createTableSQL = &quot;&quot;&quot;</span>
                 CREATE TABLE IF NOT EXISTS Players (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL UNIQUE,
@@ -56,15 +56,15 @@ public final class DatabaseManager {
                 );
                 &quot;&quot;&quot;;
 
-<span class="nc" id="L59">        try (Statement stmt = conn.createStatement()) {</span>
-<span class="nc" id="L60">            stmt.executeUpdate(createTableSQL);</span>
+<span class="fc" id="L59">        try (Statement stmt = conn.createStatement()) {</span>
+<span class="fc" id="L60">            stmt.executeUpdate(createTableSQL);</span>
 <span class="nc" id="L61">        } catch (SQLException e) {</span>
 <span class="nc" id="L62">            System.out.println(</span>
                     &quot;Hiba a táblák létrehozása során: &quot;
 <span class="nc" id="L64">                            + e.getMessage()</span>
             );
-<span class="nc" id="L66">        }</span>
-<span class="nc" id="L67">    }</span>
+<span class="fc" id="L66">        }</span>
+<span class="fc" id="L67">    }</span>
 
     /**
      * Játékos hozzáadása az adatbázishoz.
@@ -72,26 +72,26 @@ public final class DatabaseManager {
      * @param playerName A játékos neve.
      */
     public static void addPlayer(final String playerName) {
-<span class="nc" id="L75">        String insertPlayerSQL = &quot;&quot;&quot;</span>
+<span class="fc" id="L75">        String insertPlayerSQL = &quot;&quot;&quot;</span>
                 INSERT OR IGNORE INTO Players (name, wins) VALUES (?, 0);
                 &quot;&quot;&quot;;
 
-<span class="nc" id="L79">        try (Connection conn = connect();</span>
-<span class="nc" id="L80">             PreparedStatement pstmt = conn.prepareStatement(insertPlayerSQL)) {</span>
-<span class="nc" id="L81">            pstmt.setString(1, playerName);</span>
-<span class="nc" id="L82">            int rowsInserted = pstmt.executeUpdate();</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (rowsInserted &gt; 0) {</span>
+<span class="fc" id="L79">        try (Connection conn = connect();</span>
+<span class="fc" id="L80">             PreparedStatement pstmt = conn.prepareStatement(insertPlayerSQL)) {</span>
+<span class="fc" id="L81">            pstmt.setString(1, playerName);</span>
+<span class="fc" id="L82">            int rowsInserted = pstmt.executeUpdate();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (rowsInserted &gt; 0) {</span>
 <span class="nc" id="L84">                System.out.println(playerName + &quot; hozzáadva az adatbázishoz.&quot;);</span>
             } else {
-<span class="nc" id="L86">                System.out.println(playerName + &quot; már létezik.&quot;);</span>
+<span class="fc" id="L86">                System.out.println(playerName + &quot; már létezik.&quot;);</span>
             }
 <span class="nc" id="L88">        } catch (SQLException e) {</span>
 <span class="nc" id="L89">            System.out.println(</span>
                     &quot;Hiba a játékos hozzáadásakor: &quot;
 <span class="nc" id="L91">                            + e.getMessage()</span>
             );
-<span class="nc" id="L93">        }</span>
-<span class="nc" id="L94">    }</span>
+<span class="fc" id="L93">        }</span>
+<span class="fc" id="L94">    }</span>
 
     /**
      * Játékos nyeréseinek növelése.

@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 connect4-game,org.connect4,Game,258,45,35,3,79,11,28,2,8,2
-connect4-game,org.connect4,DatabaseManager,142,0,6,0,57,0,9,0,6,0
+connect4-game,org.connect4,DatabaseManager,101,41,5,1,40,17,6,3,3,3
 connect4-game,org.connect4,Board,46,323,6,48,14,58,6,31,1,9
-connect4-game,org.connect4,Main,51,0,0,0,19,0,3,0,3,0
+connect4-game,org.connect4,Main,58,0,2,0,22,0,4,0,3,0
 connect4-game,org.connect4,Player,0,15,0,0,0,6,0,3,0,3

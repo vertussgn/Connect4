@@ -61,7 +61,7 @@ public final class Game {
      * @return Egy új Game példány.
      */
     public static Game setupGame(final int choice, final Scanner scanner) {
-        boolean playAgainstAI = false; // AI-e?
+        boolean playAgainstAI = false;
         boolean loadFromFile = false;
         String player1Name;
         String player2Name;
@@ -148,7 +148,6 @@ public final class Game {
             System.out.println("Döntetlen!");
         }
     }
-
 
     /**
      * Megkapja az aktuális játékos inputját.

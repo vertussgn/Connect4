@@ -1,3 +1,4 @@
 org\connect4\BoardTest.class
-org\connect4\GameTest.class
 org\connect4\PlayerTest.class
+org\connect4\DatabaseManagerTest.class
+org\connect4\GameTest.class
