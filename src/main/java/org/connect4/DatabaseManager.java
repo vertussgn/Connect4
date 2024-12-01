@@ -8,124 +8,147 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * A DatabaseManager osztály kezeli az adatbázissal való műveleteket,
- * beleértve a pontszámok mentését, frissítését és lekérdezését.
+ * Az adatbázis-kezelésért felelős utility osztály.
  */
 public final class DatabaseManager {
-    /**
-     * Az adatbázis fájl elérési útja.
-     * Az SQLite adatbázis fájlt használjuk
-     * a Connect 4 játék pontszámainak tárolására.
-     */
-    private static final String DB_URL = "jdbc:sqlite:connect4.db";
-    // Az adatbázis fájl elérési útja
 
-    // A konstruktor priváttá tétele,
-    // hogy megakadályozza az osztály példányosítását
+    /**
+     * Az adatbázis URL-je.
+     */
+    private static final String DATABASE_URL =
+            "jdbc:sqlite:connect4.db";
+
     private DatabaseManager() {
         throw new UnsupportedOperationException("Utility class");
     }
 
     /**
-     * Ellenőrzi, hogy létezik-e a szükséges tábla, ha nem, akkor létrehozza.
+     * Létrehozza az adatbázis-kapcsolatot
+     * és biztosítja, hogy a szükséges táblák létezzenek.
+     *
+     * @return A kapcsolódó Connection objektum, vagy null, ha hiba történt.
      */
-    static void createTableIfNotExists() {
-        // Az SQL parancs a tábla létrehozására, ha nem létezik
-        String createTableSQL =
-                "CREATE TABLE IF NOT EXISTS high_scores ("
-                        + "name TEXT PRIMARY KEY,"
-                        + "score INTEGER"
-                        + ");";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(createTableSQL);
+    public static Connection connect() {
+        try {
+            Connection conn = DriverManager.getConnection(DATABASE_URL);
+            createTablesIfNotExist(conn); // Ellenőrizzük a táblák létét
+            return conn;
         } catch (SQLException e) {
-            System.out.println("Hiba történt a tábla létrehozása során: "
-                    + e.getMessage());
+            System.out.println(
+                    "Hiba az adatbázishoz való csatlakozáskor: "
+                            + e.getMessage()
+            );
+            return null;
         }
     }
 
     /**
-     * Pontszám hozzáadása vagy frissítése
-     * a játékos adatainak az adatbázisban.
-     * Ha a játékos már létezik, frissíti a pontszámot,
-     * különben új rekordot ad hozzá.
+     * Ellenőrzi, hogy a táblák léteznek-e, és ha nem, létrehozza őket.
+     *
+     * @param conn Az adatbázis kapcsolat.
+     */
+     private static void createTablesIfNotExist(final Connection conn) {
+        String createTableSQL = """
+                CREATE TABLE IF NOT EXISTS Players (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL UNIQUE,
+                    wins INTEGER DEFAULT 0
+                );
+                """;
+
+        try (Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(createTableSQL);
+        } catch (SQLException e) {
+            System.out.println(
+                    "Hiba a táblák létrehozása során: "
+                            + e.getMessage()
+            );
+        }
+    }
+
+    /**
+     * Játékos hozzáadása az adatbázishoz.
      *
      * @param playerName A játékos neve.
-     * @param score A játékos pontszáma.
      */
-    public static void addOrUpdateHighScore(final String playerName,
-                                            final int score) {
-        // Először ellenőrizzük, hogy a tábla létezik-e, ha nem, létrehozzuk
-        createTableIfNotExists();
+    public static void addPlayer(final String playerName) {
+        String insertPlayerSQL = """
+                INSERT OR IGNORE INTO Players (name, wins) VALUES (?, 0);
+                """;
 
-        // Az SQL parancs a pontszám ellenőrzésére
-        String checkSql = "SELECT score FROM high_scores WHERE name = ?";
-
-        // Az SQL parancs az új rekord beszúrására
-        String insertSql =
-                "INSERT INTO high_scores (name, score) VALUES (?, ?)";
-
-        // Az SQL parancs a pontszám frissítésére
-        String updateSql = "UPDATE high_scores SET score = ? WHERE name = ?";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
-            // Ellenőrizzük, hogy a játékos létezik-e már
-            try (PreparedStatement stmt = conn.prepareStatement(checkSql)) {
-                stmt.setString(1, playerName);
-                ResultSet rs = stmt.executeQuery();
-
-                if (rs.next()) {
-                    // Ha létezik, frissítjük a pontszámot, ha szükséges
-                    int existingScore = rs.getInt("score");
-                    if (score > existingScore) {
-                        try (PreparedStatement updateStmt =
-                                     conn.prepareStatement(updateSql)) {
-                            updateStmt.setInt(1, score);
-                            updateStmt.setString(2, playerName);
-                            updateStmt.executeUpdate();
-                        }
-                    }
-                } else {
-                    // Ha nem létezik, új rekordot adunk hozzá
-                    try (PreparedStatement insertStmt =
-                                 conn.prepareStatement(insertSql)) {
-                        insertStmt.setString(1, playerName);
-                        insertStmt.setInt(2, score);
-                        insertStmt.executeUpdate();
-                    }
-                }
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(insertPlayerSQL)) {
+            pstmt.setString(1, playerName);
+            int rowsInserted = pstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println(playerName + " hozzáadva az adatbázishoz.");
+            } else {
+                System.out.println(playerName + " már létezik.");
             }
         } catch (SQLException e) {
-            System.out.println("Hiba történt a pontszám mentése során: "
-                    + e.getMessage());
+            System.out.println(
+                    "Hiba a játékos hozzáadásakor: "
+                            + e.getMessage()
+            );
         }
     }
 
     /**
-     * A legjobb pontszámokat lekérdezi az adatbázisból.
+     * Játékos nyeréseinek növelése.
+     *
+     * @param playerName A játékos neve.
      */
-    public static void printHighScores() {
-        // Az SQL parancs a legjobb pontszámok lekérdezésére
-        String sql =
-                "SELECT name, score "
-                        + "FROM high_scores "
-                        + "ORDER BY score DESC LIMIT 10";
+    public static void incrementWins(final String playerName) {
+        String updateWinsSQL = """
+                UPDATE Players SET wins = wins + 1 WHERE name = ?;
+                """;
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            System.out.println("\nLegjobb pontszámok:");
-            while (rs.next()) {
-                // Játékos neve és pontszámának lekérdezése
-                String playerName = rs.getString("name"); // Játékos neve
-                int score = rs.getInt("score"); // Játékos pontszáma
-                System.out.println(playerName + ": " + score);
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(updateWinsSQL)) {
+            pstmt.setString(1, playerName);
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println(playerName
+                        + " nyeréseinek száma növelve.");
+            } else {
+                System.out.println(playerName
+                        + " nem található az adatbázisban.");
             }
         } catch (SQLException e) {
-            System.out.println("Hiba történt! " + e.getMessage());
+            System.out.println(
+                    "Hiba a nyerések frissítésekor: "
+                            + e.getMessage()
+            );
         }
     }
+
+    /**
+     * Játékosok és nyeréseik lekérdezése az adatbázisból.
+     */
+    public static void listPlayers() {
+        String selectPlayersSQL = """
+                SELECT name, wins FROM Players ORDER BY wins DESC;
+                """;
+
+        try (Connection conn = connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(selectPlayersSQL)) {
+
+            System.out.println("Játékosok és nyerések:");
+            while (rs.next()) {
+                System.out.println(
+                        "Név: "
+                                + rs.getString("name")
+                                + ", Nyerések: "
+                                + rs.getInt("wins")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(
+                    "Hiba az adatok lekérdezésekor: "
+                            + e.getMessage()
+            );
+        }
+    }
+
 }

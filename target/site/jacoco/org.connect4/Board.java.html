@@ -141,14 +141,14 @@ public class Board {
      */
     public boolean checkHorizontalWin(final Player player) {
 <span class="fc" id="L143">        final char token = player.getToken();</span>
-<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        for (int row = 0; row &lt; DEFAULT_ROWS; row++) {</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (int row = 0; row &lt; DEFAULT_ROWS; row++) {</span>
 <span class="fc bfc" id="L145" title="All 2 branches covered.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
 <span class="fc bfc" id="L146" title="All 2 branches covered.">                if (isWinningCombination(row, col, token, 0, 1)) {</span>
 <span class="fc" id="L147">                    return true; // Találtunk egy vízszintes győzelmet</span>
                 }
             }
         }
-<span class="nc" id="L151">        return false; // Nincs vízszintes győzelem</span>
+<span class="fc" id="L151">        return false; // Nincs vízszintes győzelem</span>
     }
 
     /**
@@ -159,14 +159,14 @@ public class Board {
      */
     public boolean checkVerticalWin(final Player player) {
 <span class="fc" id="L161">        final char token = player.getToken();</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        for (int col = 0; col &lt; DEFAULT_COLS; col++) {</span>
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        for (int col = 0; col &lt; DEFAULT_COLS; col++) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
 <span class="fc bfc" id="L164" title="All 2 branches covered.">                if (isWinningCombination(row, col, token, 1, 0)) {</span>
 <span class="fc" id="L165">                    return true; // Találtunk egy függőleges győzelmet</span>
                 }
             }
         }
-<span class="nc" id="L169">        return false; // Nincs függőleges győzelem</span>
+<span class="fc" id="L169">        return false; // Nincs függőleges győzelem</span>
     }
 
     /**
@@ -176,11 +176,11 @@ public class Board {
      * @return True, ha a játékos átlósan nyert, különben false.
      */
     public boolean checkDiagonalWin(final Player player) {
-<span class="nc" id="L179">        final char token = player.getToken();</span>
+<span class="fc" id="L179">        final char token = player.getToken();</span>
         // Pozitív lejtésű átló ellenőrzése (\)
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">                if (isWinningCombination(row, col, token, 1, 1)) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for (int row = 0; row &lt;= DEFAULT_ROWS - CONNECT_LENGTH; row++) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                if (isWinningCombination(row, col, token, 1, 1)) {</span>
 <span class="nc" id="L184">                    return true;</span>
                     // Találtunk egy átlós győzelmet (pozitív lejtés)
                 }
@@ -188,16 +188,16 @@ public class Board {
         }
 
         // Negatív lejtésű átló ellenőrzése (/)
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        for (int row = CONNECT_LENGTH - 1; row &lt; DEFAULT_ROWS; row++) {</span>
-<span class="nc bnc" id="L192" title="All 2 branches missed.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
-<span class="nc" id="L193">                if</span>
-<span class="nc bnc" id="L194" title="All 2 branches missed.">                (isWinningCombination(row, col, token, -1, 1)) {</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        for (int row = CONNECT_LENGTH - 1; row &lt; DEFAULT_ROWS; row++) {</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            for (int col = 0; col &lt;= DEFAULT_COLS - CONNECT_LENGTH; col++) {</span>
+<span class="fc" id="L193">                if</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">                (isWinningCombination(row, col, token, -1, 1)) {</span>
 <span class="nc" id="L195">                    return true;</span>
                     // Találtunk egy átlós győzelmet (negatív lejtés)
                 }
             }
         }
-<span class="nc" id="L200">        return false; // Nincs átlós győzelem</span>
+<span class="fc" id="L200">        return false; // Nincs átlós győzelem</span>
     }
 
     /**

@@ -15,8 +15,11 @@ public final class Main {
         );
     }
 
+    /** A kilépés választási lehetőség azonosítója. */
+    private static final int EXIT_OPTION = 4;
+
     /**
-     * A fő metódus amely megviszgálja a játékot.
+     * A fő metódus, amely megvizsgálja a játékot.
      *
      * @param args Parancssori argumentumok
      */
@@ -31,20 +34,30 @@ public final class Main {
      * @param scanner A felhasználói inputja - Scanner
      */
     static void inditjatek(final Scanner scanner) {
-        DatabaseManager.printHighScores();
-        System.out.println("\nVálassz egy lehetőséget:");
-        System.out.println("1. Két játékos mód");
-        System.out.println("2. Játék az AI ellen");
-        System.out.println("3. Betöltés korábbi játékállapotból");
-        System.out.print("Írd be a választásod (1, 2 vagy 3): ");
+        while (true) {
+            DatabaseManager.listPlayers();
+            System.out.println("\nVálassz egy lehetőséget:");
+            System.out.println("1. Két játékos mód");
+            System.out.println("2. Játék az AI ellen");
+            System.out.println("3. Betöltés korábbi játékállapotból");
+            System.out.println("4. Kilépés");
+            System.out.print("Írd be a választásod (1, 2, 3 vagy 4): ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+            int choice = scanner.nextInt();
+            scanner.nextLine();
 
-        Game game = Game.setupGame(choice, scanner);
-        game.start();
+            // A kilépéshez tartozó választás ellenőrzése
+            if (choice == EXIT_OPTION) {
+                System.out.println("A program kilép...");
+                break; // Kilépés a while ciklusból, így a program befejeződik
+            }
 
-        System.out.println("\nA legjobb pontszámok:");
-        DatabaseManager.printHighScores();
+            Game game = Game.setupGame(choice, scanner);
+            game.start();
+
+            // A játék befejezése után automatikusan újraindítja a játékot
+            System.out.println("\nA játék véget ért. "
+                    + "Indulhat a következő játék...");
+        }
     }
 }
