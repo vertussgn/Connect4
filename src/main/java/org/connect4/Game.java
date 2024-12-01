@@ -236,8 +236,7 @@ public final class Game {
      */
     boolean loadGameState() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Add meg a betöltendő fájl nevét "
-                + "(pl. gamestate.txt): ");
+        System.out.print("Add meg a betöltendő fájl nevét: ");
         String fileName = scanner.nextLine();
 
         return board.loadStateFromFile(fileName);
