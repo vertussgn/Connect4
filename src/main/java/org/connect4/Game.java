@@ -3,7 +3,6 @@ package org.connect4;
 import java.util.Random;
 import java.util.Scanner;
 
-
 /**
  * A Connect 4 játékot reprezentálja, beleértve a játékosokat és a játékmenetet.
  */
@@ -62,7 +61,7 @@ public final class Game {
      * @return Egy új Game példány.
      */
     public static Game setupGame(final int choice, final Scanner scanner) {
-        boolean playAgainstAI = false; // Ai-e?
+        boolean playAgainstAI = false; // AI-e?
         boolean loadFromFile = false;
         String player1Name;
         String player2Name;
@@ -91,6 +90,11 @@ public final class Game {
                 throw new IllegalArgumentException("Érvénytelen választás!");
         }
 
+        // Játékosok pontszámának mentése az adatbázisba
+        DatabaseManager.addPlayer(player1Name);  // Adja hozzá az 1. játékost
+        DatabaseManager.addPlayer(player2Name);  // Adja hozzá a 2. játékost
+
+        // Új Game objektum létrehozása
         Game game = new Game(
                 new Player(player1Name, 'X'),
                 new Player(player2Name, 'O'),
@@ -139,11 +143,12 @@ public final class Game {
             System.out.println("A(z) " + currentPlayer.getName()
                     + " nyert!");
             // Nyertes pontszám hozzáadása az adatbázishoz
-            DatabaseManager.addOrUpdateHighScore(currentPlayer.getName(), 1);
+            DatabaseManager.incrementWins(currentPlayer.getName());
         } else {
             System.out.println("Döntetlen!");
         }
     }
+
 
     /**
      * Megkapja az aktuális játékos inputját.

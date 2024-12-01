@@ -31,7 +31,7 @@ public final class Main {
      * @param scanner A felhasználói inputja - Scanner
      */
     static void inditjatek(final Scanner scanner) {
-        DatabaseManager.printHighScores();
+        DatabaseManager.listPlayers();
         System.out.println("\nVálassz egy lehetőséget:");
         System.out.println("1. Két játékos mód");
         System.out.println("2. Játék az AI ellen");
@@ -44,7 +44,6 @@ public final class Main {
         Game game = Game.setupGame(choice, scanner);
         game.start();
 
-        System.out.println("\nA legjobb pontszámok:");
-        DatabaseManager.printHighScores();
+        DatabaseManager.listPlayers();
     }
 }

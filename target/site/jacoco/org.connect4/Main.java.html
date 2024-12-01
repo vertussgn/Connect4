@@ -31,21 +31,22 @@ public final class Main {
      * @param scanner A felhasználói inputja - Scanner
      */
     static void inditjatek(final Scanner scanner) {
-<span class="nc" id="L34">        DatabaseManager.printHighScores();</span>
-<span class="nc" id="L35">        System.out.println(&quot;\nVálassz egy lehetőséget:&quot;);</span>
-<span class="nc" id="L36">        System.out.println(&quot;1. Két játékos mód&quot;);</span>
-<span class="nc" id="L37">        System.out.println(&quot;2. Játék az AI ellen&quot;);</span>
-<span class="nc" id="L38">        System.out.println(&quot;3. Betöltés korábbi játékállapotból&quot;);</span>
-<span class="nc" id="L39">        System.out.print(&quot;Írd be a választásod (1, 2 vagy 3): &quot;);</span>
+<span class="nc" id="L34">        System.out.println(&quot;\nTOP 10 pontszámok:&quot;);</span>
+<span class="nc" id="L35">        DatabaseManager.listPlayers();</span>
+<span class="nc" id="L36">        System.out.println(&quot;\nVálassz egy lehetőséget:&quot;);</span>
+<span class="nc" id="L37">        System.out.println(&quot;1. Két játékos mód&quot;);</span>
+<span class="nc" id="L38">        System.out.println(&quot;2. Játék az AI ellen&quot;);</span>
+<span class="nc" id="L39">        System.out.println(&quot;3. Betöltés korábbi játékállapotból&quot;);</span>
+<span class="nc" id="L40">        System.out.print(&quot;Írd be a választásod (1, 2 vagy 3): &quot;);</span>
 
-<span class="nc" id="L41">        int choice = scanner.nextInt();</span>
-<span class="nc" id="L42">        scanner.nextLine();</span>
+<span class="nc" id="L42">        int choice = scanner.nextInt();</span>
+<span class="nc" id="L43">        scanner.nextLine();</span>
 
-<span class="nc" id="L44">        Game game = Game.setupGame(choice, scanner);</span>
-<span class="nc" id="L45">        game.start();</span>
+<span class="nc" id="L45">        Game game = Game.setupGame(choice, scanner);</span>
+<span class="nc" id="L46">        game.start();</span>
 
-<span class="nc" id="L47">        System.out.println(&quot;\nA legjobb pontszámok:&quot;);</span>
-<span class="nc" id="L48">        DatabaseManager.printHighScores();</span>
-<span class="nc" id="L49">    }</span>
+<span class="nc" id="L48">        System.out.println(&quot;\nTOP 10 pontszámok:&quot;);</span>
+<span class="nc" id="L49">        DatabaseManager.listPlayers();</span>
+<span class="nc" id="L50">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
